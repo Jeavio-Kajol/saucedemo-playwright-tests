@@ -2,6 +2,7 @@
 
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/login.page';
+import { InventoryPage } from '../pages/inventory.page';
 
 test.describe('Login', () => {
   test.beforeEach(async ({ page }) => {
@@ -16,7 +17,7 @@ test.describe('Login', () => {
 
     await expect(loginPage.locators.loginError).toHaveText('Epic sadface: Username is required');
     await expect(page).toHaveURL(/\/$/);
-    await expect(page.getByText('Products', { exact: true })).not.toBeVisible();
+    await expect(new InventoryPage(page).locators.productsLabel).not.toBeVisible();
   });
 
   test('should show a password-required error when the password field is empty', async ({ page }) => {
@@ -31,6 +32,6 @@ test.describe('Login', () => {
 
     await expect(loginPage.locators.loginError).toHaveText('Epic sadface: Password is required');
     await expect(page).toHaveURL(/\/$/);
-    await expect(page.getByText('Products', { exact: true })).not.toBeVisible();
+    await expect(new InventoryPage(page).locators.productsLabel).not.toBeVisible();
   });
 });

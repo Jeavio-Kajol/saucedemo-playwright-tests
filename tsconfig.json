@@ -9,6 +9,6 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["tests/**/*.ts", "pages/**/*.ts", "locators/**/*.ts", "playwright.config.ts"],
+  "include": ["tests/**/*.ts", "pages/**/*.ts", "locators/**/*.ts", "utils/**/*.ts", "playwright.config.ts"],
   "exclude": ["node_modules"]
 }
