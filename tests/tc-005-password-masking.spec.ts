@@ -9,7 +9,7 @@ test.describe('Login', () => {
     await loginPage.goto();
   });
 
-  test('should mask password characters while they are entered', async ({ page }) => {
+  test('should mask password characters when they are entered', async ({ page }) => {
     const loginPage = new LoginPage(page);
     const password = process.env.SAUCEDEMO_PASSWORD;
 

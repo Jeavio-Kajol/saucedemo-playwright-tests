@@ -8,8 +8,8 @@ export class LoginPage {
     this.locators = new LoginLocators(page);
   }
 
-  async goto(): Promise<void> {
-    await this.page.goto('/');
+  async goto(path = '/'): Promise<void> {
+    await this.page.goto(path);
   }
 
   async login(username: string, password: string): Promise<void> {

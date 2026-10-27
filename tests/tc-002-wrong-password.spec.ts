@@ -1,7 +1,8 @@
-/* AI-GENERATED | Reviewed by: Kajol Gupta | Date: 2026-10-22 | Status: REVIEWED */
+/* AI-GENERATED | Reviewed by: | Date: 2026-10-27 | Status: PENDING */
 
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/login.page';
+import { InventoryPage } from '../pages/inventory.page';
 
 test.describe('Login', () => {
   test.beforeEach(async ({ page }) => {
@@ -28,7 +29,7 @@ test.describe('Login', () => {
     await expect(loginPage.locators.loginError).toHaveText(
       'Epic sadface: Username and password do not match any user in this service',
     );
-    await expect(page).toHaveURL(/\/$/);
-    await expect(page.getByText('Products', { exact: true })).not.toBeVisible();
+    await expect(page).toHaveURL('/');
+    await expect(new InventoryPage(page).locators.productsLabel).not.toBeVisible();
   });
 });
