@@ -27,7 +27,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  /* Browser settings shared by the UI projects. */
   use: {
     baseURL: process.env.BASE_URL ?? 'https://www.saucedemo.com',
 
@@ -39,17 +39,28 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+      name: 'api',
+      testMatch: '**/*.api.spec.ts',
+      use: {
+        baseURL: process.env.API_BASE_URL ?? 'https://jsonplaceholder.typicode.com',
+      },
+    },
+
+    {
       name: 'chromium',
+      testIgnore: '**/*.api.spec.ts',
       use: { ...devices['Desktop Chrome'] },
     },
 
     {
       name: 'firefox',
+      testIgnore: '**/*.api.spec.ts',
       use: { ...devices['Desktop Firefox'] },
     },
 
     {
       name: 'webkit',
+      testIgnore: '**/*.api.spec.ts',
       use: { ...devices['Desktop Safari'] },
     },
 

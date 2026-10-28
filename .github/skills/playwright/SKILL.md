@@ -2,7 +2,7 @@
 name: playwright
 description: 'Use when creating Playwright TypeScript tests for this project, including test structure, selectors, authentication, assertions, and output requirements.'
 version: 1.0
-last-updated: [2026-10-23]
+last-updated: [2026-10-27]
 ---
 
 ## 1. What this skill does
@@ -29,6 +29,11 @@ NEVER use CSS selectors, including `page.click('button.submit')` or
 
 NEVER use XPath
 
+Specs access UI locators and actions through page objects in `pages/`, backed
+by locator classes in `locators/`. Page-level assertions such as `toHaveURL()`
+are allowed directly in specs. Use the actual accessible role; do not assume
+that a product title is a heading or a cart control is a link.
+
 ### File structure
 
 By default, create one `.spec.ts` file for each manual test case. Do not combine
@@ -37,6 +42,15 @@ adding a case to an existing test file.
 
 Each test case/scenario must have its own `test()` block. Keep each test focused
 on one behavior; do not put multiple scenarios into a single `test()` block.
+Related assertions for one outcome do not require separate tests. Variants
+explicitly documented in a manual case's notes may share its file when each
+variant has its own test. TC-002's documented masking check is permitted.
+
+Existing consolidated suites `tests/login.spec.ts` and
+`tests/excel-test-cases.spec.ts` are exceptions to the per-case filename and
+file-splitting rules. A data-driven loop may register one test per row; explicit
+handwritten blocks are not required. Group Excel cases by their Feature field.
+Workbook IDs belong to the workbook and need not match the manual login IDs.
 
 Name each test file using `tc-<three-digit-case-number>-<descriptive-kebab-case>.spec.ts`,
 matching the ID in `test-data/manual-test-cases.md`. For example:
@@ -46,8 +60,10 @@ ALWAYS wrap each test file's test in `test.describe("FeatureName", ...)`.
 
 ALWAYS use beforeEach() for shared setup (login, navigation)
 
-ALWAYS mark each test file `Status: PENDING` in its review header. For newly
-generated tests, use this header on line 1:
+Mark newly generated or substantively modified tests `Status: PENDING` and
+clear the reviewer field. Completed human reviews may use `Status: REVIEWED`
+with a reviewer and review date; an audit must not reset an unchanged reviewed
+file. For newly generated tests, use this header on line 1:
 
   /* AI-GENERATED | Reviewed by: | Date: YYYY-MM-DD | Status: PENDING */
 
@@ -56,6 +72,11 @@ NEVER hard-code a URL, including a site origin or full URL. Use
 `/login` for navigation.
 
 NEVER hard-code passwords/emails — use process.env.ADMIN_EMAIL etc.
+Read standard login credentials from `SAUCEDEMO_USERNAME` and
+`SAUCEDEMO_PASSWORD`, and throw if required values are missing. The public
+SauceDemo scenario identifier `locked_out_user` is allowed as test data,
+including the workbook Username column; passwords never belong in the workbook.
+The Excel reader must validate that navigation URLs are root-relative paths.
 
 NEVER call dotenv.config() inside a test file
 
@@ -64,10 +85,16 @@ NEVER call dotenv.config() inside a test file
 Test names: "should [verb] when [condition]"
 
 Describe names: the feature name exactly
+Nested describes may identify individual data rows by their case ID. Excel
+test titles may be mapped from validated actions instead of using Scenario
+text verbatim, but must follow the same "should ... when ..." convention.
 
 ### Assertions
 
 Every test() must have at least one expect()
+Assess each registered data-driven test and its reachable branch. A switch
+without a default is not an assertion violation when the loader rejects
+unsupported actions and every supported branch asserts.
 
 Use `await expect(locator).toBeVisible()` instead of calling `.isVisible()`
 directly; `toBeVisible()` auto-retries.
@@ -81,6 +108,8 @@ NEVER use `waitForTimeout()`. Wait for the expected UI state with assertions,
 such as `await expect(locator).toBeVisible()`.
 
 ## 3. Output format
+
+This section applies to generating test files, not to audit reports.
 
 Return ONLY the TypeScript file content.
 
